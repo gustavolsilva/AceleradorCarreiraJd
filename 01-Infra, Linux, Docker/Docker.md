@@ -109,3 +109,22 @@ poetry run streamlit run app.py
 Você terá um resultado parecido com este:
 ![Streamlit Local](./img/05-streamlit_local.png)
 
+4) Crie um arquivo chamado `Dockerfile` com o seguinte conteúdo:
+```dockerfile
+FROM python:3.12 # imagem base
+RUN pip install poetry # instala o poetry
+COPY . /src # copia os arquivos para o container
+WORKDIR /src # define o diretório de trabalho
+RUN poetry install # instala as dependências
+EXPOSE 8501 # expõe a porta 8501
+ENTRYPOINT [ "poetry", "run", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0" ] # comando para rodar a aplicação
+```
+
+5) Adicione o .dockerignore
+```
+.venv
+```
+
+6) Construa a imagem Docker
+```bash
+docker build -t minha-primeira-imagem .
