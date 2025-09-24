@@ -83,9 +83,48 @@ docker ps
 
 ### Hello World do Docker
 
-1) Determine sua versão de Python
+1) Adicione o streamlit ao seu ambiente virtual
 ```bash
-python3 --version
+poetry add streamlit
 ```
-2) Crie seu ambiente virtualizado, no nosso caso, usando o Poetry.
+2) Crie um arquivo chamado `app.py` com o seguinte conteúdo:
+```python
+import streamlit as st
+
+def hello_world():
+    return "Olá Turma de Dados! Aula de Docker"
+
+def main():
+    st.write(hello_world())
+
+if __name__ == "__main__":
+    main()
+```
+
+3) Teste a aplicação localmente
 ```bash
+poetry run streamlit run app.py
+```
+
+Você terá um resultado parecido com este:
+![Streamlit Local](./img/05-streamlit_local.png)
+
+4) Crie um arquivo chamado `Dockerfile` com o seguinte conteúdo:
+```dockerfile
+FROM python:3.12 # imagem base
+RUN pip install poetry # instala o poetry
+COPY . /src # copia os arquivos para o container
+WORKDIR /src # define o diretório de trabalho
+RUN poetry install # instala as dependências
+EXPOSE 8501 # expõe a porta 8501
+ENTRYPOINT [ "poetry", "run", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0" ] # comando para rodar a aplicação
+```
+
+5) Adicione o .dockerignore
+```
+.venv
+```
+
+6) Construa a imagem Docker
+```bash
+docker build -t minha-primeira-imagem .
