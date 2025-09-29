@@ -128,3 +128,33 @@ ENTRYPOINT [ "poetry", "run", "streamlit", "run", "app.py", "--server.port=8501"
 6) Construa a imagem Docker
 ```bash
 docker build -t minha-primeira-imagem .
+
+7) Liste as imagens Docker disponíveis
+```bash
+docker images
+```
+
+8) Execute o container
+```bash
+docker run -d -p 8501:8501 minha-primeira-imagem
+``` 
+
+9) Acesse a aplicação no navegador
+Abra o navegador e acesse http://localhost:8501
+
+Imagem da aplicação rodando no Docker:
+![Streamlit Docker](./img/06-streamlit_docker.png)
+
+
+### Informações importantes do Workshop sobre Docker
+
+```bash
+git clone ...
+cd ...
+```
+
+```bash
+docker build ...
+docker run ...
+```
+
