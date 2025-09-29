@@ -158,3 +158,85 @@ docker build ...
 docker run ...
 ```
 
+### Meios de deploy - Render
+<p> Há meios como o Render para fazer um deploy do Container </p>
+
+1) Entre no site do Render: https://render.com/
+2) Crie uma conta ou faça login.
+3) Clique em "New" e selecione "Web Service".
+4) Conecte sua conta do GitHub e selecione o repositório que contém seu Dockerfile.
+5) Configure o serviço:
+   - Nome do serviço
+   - Região
+   - Branch (geralmente "main" ou "master")
+   - Dockerfile Path (caminho para o seu Dockerfile, geralmente é apenas "./Dockerfile")
+   - Port (a porta que sua aplicação está escutando, no caso do Streamlit, é 8501)
+6) Clique em "Create Web Service".
+7) O Render irá construir a imagem Docker e iniciar o serviço. Você pode acompanhar o progresso na seção de logs.
+8) Após a construção e o deploy serem concluídos, você receberá uma URL onde sua aplicação estará disponível.
+
+### Meios de Deploy - AWS
+<p> Há meios como a AWS para fazer um deploy do Container. Vamos fazer via EC2. </p>
+
+1) Crie uma conta na AWS: https://aws.amazon.com/
+2) Acesse o console de gerenciamento da AWS: https://aws.amazon.com/console/
+3) Vá para o serviço EC2 (Elastic Compute Cloud).
+4) Clique em "Launch Instance" para criar uma nova instância.
+5) Escolha uma Amazon Machine Image (AMI). Para este exemplo, selecione "Amazon Linux 2 AMI".
+6) Escolha o tipo de instância. Para testes, a t2.micro (que é elegível para o nível gratuito) é suficiente.
+7) Configure key pair para acessar a instância via SSH. Se você não tiver um, crie um novo e baixe o arquivo .pem.
+8) Configure o grupo de segurança para permitir o tráfego Custom TCP e a porta que sua aplicação Docker estará escutando (por exemplo, 8501 para Streamlit) e o endereço de ip 0.0.0.0/0
+9) Revise e lance a instância.
+10) Para conectar via ssh, no Console da AWS, selecione a instância e clique em "Connect".
+11) Escolha a guia SSH client.
+12) Siga as instruções para conectar via terminal. Exemplo:
+```bash
+chmod 400 your-key-pair.pem
+```
+13) Conecte-se à instância:
+```bash
+ssh -i "your-key-pair.pem" ec2-user@your-instance-public-dns.us-west-1.compute.amazonaws.com # Onde, your-instance-public-dns é o DNS público da sua instância
+```
+14) Atualize os pacotes e instale o Docker:
+```bash
+sudo yum update -y
+sudo yum install docker -y
+sudo usermod -a -G docker ec2-user
+newgrp docker
+sudo service docker start
+sudo systemctl enable docker
+```
+15) Verifique a instalação do Docker:
+```bash
+docker --version
+docker run hello-world
+``` 
+16) Instale o Git para clonar seu repositório:
+```bash
+sudo yum install git -y
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+```
+17) Construa a imagem Docker:
+```bash
+docker build -t minha-primeira-imagem .
+```
+18) Execute o container:
+```bash
+docker run -d -p 8501:8501 --name meu-container minha-primeira-imagem
+```
+19) Verifique se o container está rodando:
+```bash
+docker ps
+```
+20) Acesse sua aplicação no navegador usando o endereço público da sua instância EC2 e a porta que você expôs (por exemplo, http://your-instance-public-dns:8501)
+
+
+### Dica Bonus de Local para Deploy - Digital Ocean
+<p> Há meios como a Digital Ocean para fazer um deploy do Container. </p>
+1) Crie uma conta na Digital Ocean: https://www.digitalocean.com/
+2) Acesse o painel de controle da Digital Ocean: https://cloud.digitalocean.com
+3) Clique em "Create" e selecione "Droplets".
+
+A Vantagem é que você ganha $200,00 para gastar em 60 dias.
+
